@@ -72,6 +72,7 @@ class EDD_Mini_API {
 	private function includes() {
 		require_once( 'includes/class-endpoint.php' );
 		require_once( 'includes/class-user.php' );
+		require_once( 'includes/class-purchases.php' );
 	}
 
 }

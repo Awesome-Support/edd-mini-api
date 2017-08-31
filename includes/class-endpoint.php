@@ -17,6 +17,11 @@ if ( ! defined( 'WPINC' ) ) {
 class Endpoint {
 
 	/**
+	 * @var User
+	 */
+	public $user;
+
+	/**
 	 * Check user authentication.
 	 *
 	 * @return \WP_Error|bool
@@ -31,14 +36,14 @@ class Endpoint {
 		}
 
 		// Get our user object.
-		$user = new User( $creds['email'] );
+		$this->user = new User( $creds['email'] );
 
 		// Make sure that the user exists.
-		if ( is_wp_error( $user ) ) {
-			return $user;
+		if ( is_wp_error( $this->user ) ) {
+			return $this->user;
 		}
 
-		return $user->authenticate( $creds['api_key'], $creds['api_token'] );
+		return $this->user->authenticate( $creds['api_key'], $creds['api_token'] );
 
 	}
 
@@ -110,6 +115,9 @@ class Endpoint {
 
 			return $this->prepare_response( $message, true );
 		}
+
+		$addons = new Purchases( $this->user->user_id );
+		return $addons->get_customer_purchases();
 
 		return array();
 	}
