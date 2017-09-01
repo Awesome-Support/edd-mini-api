@@ -24,6 +24,8 @@ class Endpoint {
 	/**
 	 * Check user authentication.
 	 *
+	 * @param array $data The GET variables.
+	 *
 	 * @return \WP_Error|bool
 	 */
 	protected function is_user_authenticated( $data ) {
@@ -39,8 +41,8 @@ class Endpoint {
 		$this->user = new User( $creds['email'] );
 
 		// Make sure that the user exists.
-		if ( is_wp_error( $this->user ) ) {
-			return $this->user;
+		if ( false === $this->user->user ) {
+			return new \WP_Error( 'user_not_exists', 'The user does not exist' );
 		}
 
 		return $this->user->authenticate( $creds['api_key'], $creds['api_token'] );
@@ -104,7 +106,6 @@ class Endpoint {
 	/**
 	 * Get all addons purchased by the customer.
 	 *
-	 *
 	 * @return array
 	 */
 	public function get_customer_addons() {
@@ -116,17 +117,18 @@ class Endpoint {
 			return $this->prepare_response( $message, true );
 		}
 
-		$addons = new Purchases( $this->user->user_id );
-		return $addons->get_customer_purchases();
+		$addons = new Purchases( $this->user );
 
-		return array();
+		return $addons->get_customer_purchases();
 	}
 
 	/**
-	 * Preare the endpoint response in a standardized JSON format.
+	 * Prepare the endpoint response in a standardized format.
 	 *
 	 * @param mixed $data
 	 * @param bool  $error
+	 *
+	 * @return array
 	 */
 	protected function prepare_response( $data = null, $error = false ) {
 		$response = array( 'error' => $error, 'data' => array() );

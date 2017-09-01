@@ -22,7 +22,7 @@ class User {
 	public $user_id;
 
 	/**
-	 * @var WP_User|false
+	 * @var \WP_User|false
 	 */
 	public $user;
 
@@ -36,21 +36,21 @@ class User {
 	 */
 	protected $private_key;
 
+	/**
+	 * User constructor.
+	 *
+	 * @param $user_id
+	 */
 	public function __construct( $user_id ) {
 		$this->user_id = $user_id;
 		$this->set_user();
-
-		if ( false === $this->user ) {
-			return new \WP_Error( 'unknown_user', 'Unknown user' );
-		}
-
 		$this->load_tokens();
 	}
 
 	/**
 	 * Get the user object.
 	 *
-	 * @return WP_User|false
+	 * @return void
 	 */
 	protected function set_user() {
 		if ( is_email( $this->user_id ) ) {
