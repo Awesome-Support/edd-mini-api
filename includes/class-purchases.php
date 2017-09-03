@@ -79,6 +79,27 @@ class Purchases {
 	}
 
 	/**
+	 * Get the download license key.
+	 *
+	 * @since  0.2.0
+	 *
+	 * @param int $purchase_id
+	 * @param int $download_id
+	 *
+	 * @reutrn string
+	 */
+	protected function get_download_license( $purchase_id, $download_id ) {
+
+		if ( ! function_exists( 'edd_software_licensing' ) ) {
+			return '';
+		}
+
+		$license = edd_software_licensing()->get_license_by_purchase( $purchase_id, $download_id );
+
+		return edd_software_licensing()->get_license_key( $license->ID );
+	}
+
+	/**
 	 * Get the customer payments.
 	 *
 	 * @since 0.2.0
@@ -103,6 +124,7 @@ class Purchases {
 		foreach ( $downloads as $key => $download ) {
 			$downloads[ $key ]['product_link']   = get_permalink( $download['id'] );
 			$downloads[ $key ]['download_links'] = $this->get_download_links( $purchase_id, $download['id'], $download['item_number']['options']['price_id'] );
+			$downloads[ $key ]['license_key']    = $this->get_download_license( $purchase_id, $download['id'] );
 		}
 
 		return $downloads;
